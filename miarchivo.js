@@ -31,7 +31,7 @@ switch (cuotas) {
   default:
     porcentaje = 0;
 }
-montoFinal = importe + (importe * porcentaje) / 100;
+montoFinal = parseInt(importe) + importe * (porcentaje / 100);
 
 valorCuota = montoFinal / cuotas;
 alert("El valor de su cuota es: " + valorCuota);
