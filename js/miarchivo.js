@@ -57,7 +57,6 @@ function limpiarRegistros() {
 }
 
 function limpiarUltimoRegistro() {
-  console.log("registros antes", registros);
   if (registros.length === 0) {
     alert("No hay registros para eliminar");
   } else {
