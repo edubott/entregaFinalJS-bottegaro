@@ -97,8 +97,26 @@
         </div>
         <div class="d-flex flex-column">
             <button class="btn btn-warning" id="ejecutar-simulador">Simular cuotas</button>
-            <span id="resultado" class="my-3"></span>
         </div>
+        <table class="table my-3 text-white">
+            <thead>
+                <tr>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Importe</th>
+                    <th scope="col">Cuotas</th>
+                    <th scope="col">Interes</th>
+                    <th scope="col">Monto final</th>
+                    <th scope="col">Valor cuota</th>
+                </tr>
+            </thead>
+            <tbody id="registros">
+            </tbody>
+        </table>
+        <button class="btn btn-link" id="limpiar-registros">Limpiar registros</button>
+        <button class="btn btn-link" id="limpiar-ultimo-registro">Limpiar ultimo registro</button>
+
+
     </main>
 
     <script src="./js/miarchivo.js"></script>

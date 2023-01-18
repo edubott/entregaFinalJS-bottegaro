@@ -1,12 +1,19 @@
 let ejecutarSimuladorBtn = document.getElementById("ejecutar-simulador");
-let resultado = document.getElementById("resultado");
+let tBodyRegistros = document.getElementById("registros");
+let btnLimpiarRegistros = document.getElementById("limpiar-registros");
+let btnLimpiarUltimoRegistro = document.getElementById(
+  "limpiar-ultimo-registro"
+);
+
+let registros = [];
 
 ejecutarSimuladorBtn.addEventListener("click", ejecutarSimulador);
+btnLimpiarRegistros.addEventListener("click", limpiarRegistros);
+btnLimpiarUltimoRegistro.addEventListener("click", limpiarUltimoRegistro);
 
 function ejecutarSimulador() {
-  resultado.innerText = "";
-
   let usuario = prompt("Ingrese su nombre");
+  let producto = prompt("Ingrese nombre producto");
   let importe = 0;
   let cuotas = 0;
   let porcentaje = 0;
@@ -25,7 +32,60 @@ function ejecutarSimulador() {
   montoFinal = calcularMontoFinal(importe, porcentaje);
   valorCuota = calcularValorCuota(montoFinal, cuotas);
 
-  resultado.innerText = `Usuario: ${usuario}, su valor de cuota es: ${valorCuota}`;
+  const registro = {
+    usuario: usuario,
+    producto: producto,
+    importe: importe,
+    cuotas: cuotas,
+    interes: porcentaje,
+    montoFinal: montoFinal,
+    valorCuota: valorCuota,
+  };
+
+  registros.push(registro);
+
+  cargarTablaRegistros(registros);
+}
+
+function limpiarRegistros() {
+  if (registros.length === 0) {
+    alert("No hay registros para eliminar");
+  } else {
+    registros = [];
+    tBodyRegistros.innerHTML = "";
+  }
+}
+
+function limpiarUltimoRegistro() {
+  console.log("registros antes", registros);
+  if (registros.length === 0) {
+    alert("No hay registros para eliminar");
+  } else {
+    registros.pop();
+    cargarTablaRegistros(registros);
+  }
+}
+
+function cargarTablaRegistros(registros) {
+  if (registros.length > 0) {
+    tBodyRegistros.innerHTML = "";
+    registros.forEach((registro) => {
+      tBodyRegistros.innerHTML += `
+                        <tr>
+                          <td class="text-center"> ${registro.usuario} </td>
+                          <td class="text-center"> ${registro.producto} </td>
+                          <td class="text-center"> $${registro.importe} </td>
+                          <td class="text-center"> ${registro.cuotas} </td>
+                          <td class="text-center"> ${registro.interes}% </td>
+                          <td class="text-center"> $${registro.montoFinal} </td>
+                          <td class="text-center"> $${registro.valorCuota.toFixed(
+                            2
+                          )} </td>
+                        </tr>`;
+    });
+  } else {
+    tBodyRegistros.innerHTML = "";
+  }
 }
 
 function calcularPorcentaje(porcentaje, cuotas) {
