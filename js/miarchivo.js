@@ -1,32 +1,29 @@
+let registros = obtenerDatosLocalStorage();
 let ejecutarSimuladorBtn = document.getElementById("ejecutar-simulador");
 let tBodyRegistros = document.getElementById("registros");
 let btnLimpiarRegistros = document.getElementById("limpiar-registros");
 let btnLimpiarUltimoRegistro = document.getElementById(
   "limpiar-ultimo-registro"
 );
+let formSimulador = document.getElementById("form-simulador");
+let alertaRegistroExitoso = document.getElementById("registro-exitoso");
+let alertaSinRegistros = document.getElementById("sin-registros");
 
-let registros = [];
-
-ejecutarSimuladorBtn.addEventListener("click", ejecutarSimulador);
+formSimulador.addEventListener("submit", ejecutarSimulador);
 btnLimpiarRegistros.addEventListener("click", limpiarRegistros);
 btnLimpiarUltimoRegistro.addEventListener("click", limpiarUltimoRegistro);
 
-function ejecutarSimulador() {
-  let usuario = prompt("Ingrese su nombre");
-  let producto = prompt("Ingrese nombre producto");
-  let importe = 0;
-  let cuotas = 0;
+cargarTablaRegistros(registros);
+
+function ejecutarSimulador(event) {
+  event.preventDefault();
+  let usuario = document.getElementById("usuario").value;
+  let producto = document.getElementById("producto").value;
+  let importe = parseInt(document.getElementById("importe").value);
+  let cuotas = parseInt(document.getElementById("cuotas").value);
   let porcentaje = 0;
   let montoFinal = 0;
   let valorCuota = 0;
-
-  do {
-    importe = prompt("Ingrese importe");
-  } while (isNaN(importe));
-
-  do {
-    cuotas = parseInt(prompt("Ingrese cantidad de cuotas: 3, 6, 12"));
-  } while (cuotas !== 3 && cuotas !== 6 && cuotas !== 12);
 
   porcentaje = calcularPorcentaje(porcentaje, cuotas);
   montoFinal = calcularMontoFinal(importe, porcentaje);
@@ -44,23 +41,28 @@ function ejecutarSimulador() {
 
   registros.push(registro);
 
+  localStorage.setItem("registros", JSON.stringify(registros));
+  mostrarAlerta(alertaRegistroExitoso);
   cargarTablaRegistros(registros);
+  limpiarFormulario();
 }
 
 function limpiarRegistros() {
   if (registros.length === 0) {
-    alert("No hay registros para eliminar");
+    mostrarAlerta(alertaSinRegistros);
   } else {
     registros = [];
+    localStorage.removeItem("registros");
     tBodyRegistros.innerHTML = "";
   }
 }
 
 function limpiarUltimoRegistro() {
   if (registros.length === 0) {
-    alert("No hay registros para eliminar");
+    mostrarAlerta(alertaSinRegistros);
   } else {
     registros.pop();
+    localStorage.setItem("registros", JSON.stringify(registros));
     cargarTablaRegistros(registros);
   }
 }
@@ -110,4 +112,27 @@ function calcularMontoFinal(importe, porcentaje) {
 
 function calcularValorCuota(montoFinal, cuotas) {
   return montoFinal / cuotas;
+}
+
+function obtenerDatosLocalStorage() {
+  let datos = localStorage.getItem("registros");
+  if (datos) {
+    return JSON.parse(datos);
+  } else {
+    return [];
+  }
+}
+
+function limpiarFormulario() {
+  document.getElementById("usuario").value = "";
+  document.getElementById("producto").value = "";
+  document.getElementById("importe").value = "";
+  document.getElementById("cuotas").value = "3";
+}
+
+function mostrarAlerta(alerta) {
+  alerta.style.display = "inline";
+  setTimeout(() => {
+    alerta.style.display = "none";
+  }, 1500);
 }
