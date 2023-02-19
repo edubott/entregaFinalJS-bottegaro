@@ -1,4 +1,6 @@
-let registros = obtenerDatosLocalStorage();
+let registrosJson;
+let registros;
+
 let ejecutarSimuladorBtn = document.getElementById("ejecutar-simulador");
 let tBodyRegistros = document.getElementById("registros");
 let btnLimpiarRegistros = document.getElementById("limpiar-registros");
@@ -13,7 +15,22 @@ formSimulador.addEventListener("submit", ejecutarSimulador);
 btnLimpiarRegistros.addEventListener("click", limpiarRegistros);
 btnLimpiarUltimoRegistro.addEventListener("click", limpiarUltimoRegistro);
 
-cargarTablaRegistros(registros);
+obtenerJson("./db.json")
+  .then((data) => {
+    registrosJson = data;
+    let registrosLocalStorage = obtenerDatosLocalStorage();
+
+    if (registrosLocalStorage) {
+      let ids = new Set(registrosJson.map((registro) => registro.id));
+      registros = [
+        ...registrosJson,
+        ...registrosLocalStorage.filter((registro) => !ids.has(registro.id)),
+      ];
+    }
+    cargarTablaRegistros(registros);
+    localStorage.setItem("registros", JSON.stringify(registros));
+  })
+  .catch((error) => console.log(error));
 
 function ejecutarSimulador(event) {
   event.preventDefault();
@@ -24,12 +41,14 @@ function ejecutarSimulador(event) {
   let porcentaje = 0;
   let montoFinal = 0;
   let valorCuota = 0;
+  let ultimoRegistro = registros.at(-1);
 
   porcentaje = calcularPorcentaje(porcentaje, cuotas);
   montoFinal = calcularMontoFinal(importe, porcentaje);
   valorCuota = calcularValorCuota(montoFinal, cuotas);
 
   const registro = {
+    id: ultimoRegistro.id + 1,
     usuario: usuario,
     producto: producto,
     importe: importe,
@@ -121,6 +140,11 @@ function obtenerDatosLocalStorage() {
   } else {
     return [];
   }
+}
+
+async function obtenerJson(url) {
+  const response = await fetch(url);
+  return await response.json();
 }
 
 function limpiarFormulario() {

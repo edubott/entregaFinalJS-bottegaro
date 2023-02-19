@@ -1,0 +1,22 @@
+[
+    {
+      "id": 1,
+      "usuario": "Edu",
+      "producto": "Auto",
+      "importe": 1500000,
+      "cuotas": 3,
+      "interes": 7,
+      "montoFinal": 1605000,
+      "valorCuota": 535000
+    },
+    {
+      "id": 2,
+      "usuario": "Pedro",
+      "producto": "Moto",
+      "importe": 500000,
+      "cuotas": 6,
+      "interes": 10,
+      "montoFinal": 550000,
+      "valorCuota": 91666
+    }
+  ]
