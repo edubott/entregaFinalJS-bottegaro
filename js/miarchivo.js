@@ -8,8 +8,6 @@ let btnLimpiarUltimoRegistro = document.getElementById(
   "limpiar-ultimo-registro"
 );
 let formSimulador = document.getElementById("form-simulador");
-let alertaRegistroExitoso = document.getElementById("registro-exitoso");
-let alertaSinRegistros = document.getElementById("sin-registros");
 
 formSimulador.addEventListener("submit", ejecutarSimulador);
 btnLimpiarRegistros.addEventListener("click", limpiarRegistros);
@@ -17,6 +15,13 @@ btnLimpiarUltimoRegistro.addEventListener("click", limpiarUltimoRegistro);
 
 obtenerJson("./db.json")
   .then((data) => {
+    mostrarAlerta({
+      title: "Datos cargados correctamente",
+      text: "Se recuperaron exitosamente los datos previamente guardados",
+      icon: "success",
+      button: "Cerrar",
+    });
+
     registrosJson = data;
     let registrosLocalStorage = obtenerDatosLocalStorage();
 
@@ -48,7 +53,7 @@ function ejecutarSimulador(event) {
   valorCuota = calcularValorCuota(montoFinal, cuotas);
 
   const registro = {
-    id: ultimoRegistro.id + 1,
+    id: ultimoRegistro ? ultimoRegistro.id + 1 : 1,
     usuario: usuario,
     producto: producto,
     importe: importe,
@@ -61,14 +66,24 @@ function ejecutarSimulador(event) {
   registros.push(registro);
 
   localStorage.setItem("registros", JSON.stringify(registros));
-  mostrarAlerta(alertaRegistroExitoso);
+  mostrarAlerta({
+    title: "Guardado exitoso",
+    text: "Su registro ha sido guardado exitosamente.",
+    icon: "success",
+    button: "Cerrar",
+  });
   cargarTablaRegistros(registros);
   limpiarFormulario();
 }
 
 function limpiarRegistros() {
   if (registros.length === 0) {
-    mostrarAlerta(alertaSinRegistros);
+    mostrarAlerta({
+      title: "Error",
+      text: "No hay registros para eliminar",
+      icon: "error",
+      button: "Cerrar",
+    });
   } else {
     registros = [];
     localStorage.removeItem("registros");
@@ -78,7 +93,12 @@ function limpiarRegistros() {
 
 function limpiarUltimoRegistro() {
   if (registros.length === 0) {
-    mostrarAlerta(alertaSinRegistros);
+    mostrarAlerta({
+      title: "Error",
+      text: "No hay registros para eliminar",
+      icon: "error",
+      button: "Cerrar",
+    });
   } else {
     registros.pop();
     localStorage.setItem("registros", JSON.stringify(registros));
@@ -154,9 +174,11 @@ function limpiarFormulario() {
   document.getElementById("cuotas").value = "3";
 }
 
-function mostrarAlerta(alerta) {
-  alerta.style.display = "inline";
-  setTimeout(() => {
-    alerta.style.display = "none";
-  }, 1500);
+function mostrarAlerta(props) {
+  swal({
+    title: props.title,
+    text: props.text,
+    icon: props.icon,
+    button: props.button,
+  });
 }
